@@ -1,0 +1,345 @@
+---
+title: '栈的应用--计算数学表达式'
+date: 2016-09-20 16:26:28
+tags: ["栈", "计算数学表达式"]
+---
+		<div>
+			<div class="blog-body">
+				<p>栈的重要应用之一，计算数学表达式。</p>
+				<p>在计算器中，我们输入了一个数学表达式，当我们按下等于号的时候，背后到底发生了什么。</p>
+				<p>我们输入的其实是一个字符串，我们用一个算法来处理这个字符串。来进行数学运算，正确则出结果，错误则提示<code>Error</code>。</p>
+				<p>有括号的数学表达式比较复杂，我们先来考虑没有圆括号的数学表达式。</p>
+				<p>比如一个简单的数学表达式：<code>1+2</code>。</p>
+				<p>为了判断是否到达字符串的末尾，我们在字符串最后加上一个符号<code>`</code>。<code>expression += "`"</code></p>
+				<p>我们用一个栈来保存数字<code>num = new Stack</code>，一个栈来保存运算符<code>operator = new Stack</code>。</p>
+				<div>
+					<svg width="50%" height="100%" xmlns="http://www.w3.org/2000/svg">
+						<polyline points="66,50 66,150 166,150 166,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<polyline points="232,50 232,150 332,150 332,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="95" y="170" fill="black" stroke="black">num</text>
+						<text x="247" y="170" fill="black" stroke="black">operator</text>
+					</svg>
+				</div>
+				<p>既然来到了字符串，我们就得循环处理咯。</p>
+				<p>首先，我们遇到了数字1，数字推入<code>num</code>栈。</p>
+				<div>
+					<svg width="50%" height="100%" xmlns="http://www.w3.org/2000/svg">
+						<polyline points="66,50 66,150 166,150 166,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="110" y="140" fill="skyblue" stroke="skyblue">1</text>
+						<polyline points="232,50 232,150 332,150 332,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="95" y="170" fill="black" stroke="black">num</text>
+						<text x="247" y="170" fill="black" stroke="black">operator</text>
+					</svg>
+				</div>
+				<p>接下来，我们遇到了运算符<code>+</code>，操作符推进<code>operator</code>栈。</p>
+				<div>
+					<svg width="50%" height="100%" xmlns="http://www.w3.org/2000/svg">
+						<polyline points="66,50 66,150 166,150 166,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="110" y="140" fill="skyblue" stroke="skyblue">1</text>
+						<polyline points="232,50 232,150 332,150 332,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="276" y="140" fill="blue" stroke="blue">+</text>
+						<text x="95" y="170" fill="black" stroke="black">num</text>
+						<text x="247" y="170" fill="black" stroke="black">operator</text>
+					</svg>
+				</div>
+				<p>继续，我们遇到了数字2，数字推进<code>num</code>栈。</p>
+				<div>
+					<svg width="50%" height="100%" xmlns="http://www.w3.org/2000/svg">
+						<polyline points="66,50 66,150 166,150 166,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="110" y="140" fill="skyblue" stroke="skyblue">1</text>
+						<text x="110" y="110" fill="skyblue" stroke="skyblue">2</text>
+						<polyline points="232,50 232,150 332,150 332,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="276" y="140" fill="blue" stroke="blue">+</text>
+						<text x="95" y="170" fill="black" stroke="black">num</text>
+						<text x="247" y="170" fill="black" stroke="black">operator</text>
+					</svg>
+				</div>
+				<p>继续，我们遇到了<code>`</code>，这个符号代表我们到了字符串的结尾。<code>num</code>出栈一个操作数，这是第二个操作数，我们记作<code>op_2</code>。再次出栈一个操作数，这是第一个操作数，我们记作<code>op_1</code>。接着我们从<code>operator</code>栈中出栈一个操作符。记作<code>op</code>。我们定义一个函数<code>function caculate(op_1, op_2, op) {}</code>，我们在函数中根据操作符来返回相应的数值。在这个案例中，我们的公式为<code>op_1 op op_2</code>，就是<code>1 + 2</code>，返回值为<code>3</code>。并且我们将这个数值推进<code>num</code>栈。此时，栈为这样：</p>
+				<div>
+					<svg width="50%" height="100%" xmlns="http://www.w3.org/2000/svg">
+						<polyline points="66,50 66,150 166,150 166,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="110" y="140" fill="skyblue" stroke="skyblue">3</text>
+						<polyline points="232,50 232,150 332,150 332,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="95" y="170" fill="black" stroke="black">num</text>
+						<text x="247" y="170" fill="black" stroke="black">operator</text>
+					</svg>
+				</div>
+				<p>最后，我们将<code>num</code>栈里面的数字出栈，结果就出来了。</p>
+				<p>循循渐进，我们继续接触还是一个操作符的数学表达式，但是我们增加数字的位数。</p>
+				<p>比如这个表达式：<code>11+22</code></p>
+				<p>加入结束符：<code>11+22`</code></p>
+				<p>循环开始，我们遇到了1，这时候我们不能简单地开始下一次循环，来看看代码：</p>
+				<div>
+					<pre>
+					<code class="language-js">
+function caculateMathExpression(expression){
+	//操作数栈   操作符栈
+	var num = new Stack;
+	var operator = new Stack;
+	//预处理字符串
+	expression += "`";
+	//多位数
+	var longNum = "";
+	for(var i = 0; i < expression.length; i++) {
+		//如果expression[i]是一个数字
+		if(isNumber(expression[i])) {
+			//判断当前位数的下一位数是不是数字
+			while(isNumber(expression[i++])) {
+				//如果是数字，拼合长数字
+				longNum += expression[i];
+			}
+			//将长数字的字符串转换成数字，然后推进num栈
+			num.push(parseFloat(longNum));
+			//当前的i指向不是数字的位置，因为此次循环结束i要加一，
+			//所以我们现在要将i的位置退一位
+			i--;
+		}
+	}
+}
+						</code></pre>
+				</div>
+				<p>根据代码，我们的下一位依旧是数字，我们将得到字符串<code>"11"</code>，装换为数字之后推入数字栈。此时的栈：</p>
+				<div>
+					<svg width="50%" height="100%" xmlns="http://www.w3.org/2000/svg">
+						<polyline points="66,50 66,150 166,150 166,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="105" y="140" fill="skyblue" stroke="skyblue">11</text>
+						<polyline points="232,50 232,150 332,150 332,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="95" y="170" fill="black" stroke="black">num</text>
+						<text x="247" y="170" fill="black" stroke="black">operator</text>
+					</svg>
+				</div>
+				<p>此时的<code>i</code>指向<code>+</code>，这是一个操作符，我们将其推入<code>operator</code>栈，此时的栈：</p>
+				<div>
+					<svg width="50%" height="100%" xmlns="http://www.w3.org/2000/svg">
+						<polyline points="66,50 66,150 166,150 166,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="105" y="140" fill="skyblue" stroke="skyblue">11</text>
+						<polyline points="232,50 232,150 332,150 332,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="276" y="140" fill="blue" stroke="blue">+</text>
+						<text x="95" y="170" fill="black" stroke="black">num</text>
+						<text x="247" y="170" fill="black" stroke="black">operator</text>
+					</svg>
+				</div>
+				<p>我们接下来遇到了和上面处理<code>11</code>相同的情况。我们通过相同的处理得到了数字<code>22</code>，并且将其推入<code>num</code>栈。此时的栈：</p>
+				<div>
+					<svg width="50%" height="100%" xmlns="http://www.w3.org/2000/svg">
+						<polyline points="66,50 66,150 166,150 166,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="105" y="140" fill="skyblue" stroke="skyblue">11</text>
+						<text x="105" y="120" fill="skyblue" stroke="skyblue">22</text>
+						<polyline points="232,50 232,150 332,150 332,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="276" y="140" fill="blue" stroke="blue">+</text>
+						<text x="95" y="170" fill="black" stroke="black">num</text>
+						<text x="247" y="170" fill="black" stroke="black">operator</text>
+					</svg>
+				</div>
+				<p>接下来我们遇到了字符<code>`</code>，这个字符代表了我们遇到字符串的结尾（我们这里称作为字符结尾，实际上我们只要遇到了一个操作符的优先级不如上一个操作符优先级高或者是优先级相等，我们就要出栈运算）。我们需要出栈运算。和上面一样，我们从<code>num</code>出栈两个操作数，从<code>operator</code>栈出栈一个操作符，对操作数进行运算。<code>11+22</code>，返回值为<code>33</code>，将结果推入<code>num</code>栈。</p>
+				<p>最后我们将<code>33</code>出栈，这时候运算结束。</p>
+				<p>好吧，我们讨论的太简单了，来个更加复杂点的：<code>11+22*55</code>。</p>
+				<p>我们终于将乘除法引进来了。这里的字符串分析方法做了些东西。</p>
+				<p>加入结束符：<code>expression += "`"</code></p>
+				<p>我们循环该字符串，根据上面的思想，我们得到了第一个数字<code>11</code>。</p>
+				<div>
+					<svg width="50%" height="100%" xmlns="http://www.w3.org/2000/svg">
+						<polyline points="66,50 66,150 166,150 166,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="105" y="140" fill="skyblue" stroke="skyblue">11</text>
+						<polyline points="232,50 232,150 332,150 332,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="95" y="170" fill="black" stroke="black">num</text>
+						<text x="247" y="170" fill="black" stroke="black">operator</text>
+					</svg>
+				</div>
+				<p>同样，我们得到了<code>+</code>，以及<code>22</code></p>
+				<div>
+					<svg width="50%" height="100%" xmlns="http://www.w3.org/2000/svg">
+						<polyline points="66,50 66,150 166,150 166,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="105" y="140" fill="skyblue" stroke="skyblue">11</text>
+						<text x="105" y="120" fill="skyblue" stroke="skyblue">22</text>
+						<polyline points="232,50 232,150 332,150 332,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="276" y="140" fill="blue" stroke="blue">+</text>
+						<text x="95" y="170" fill="black" stroke="black">num</text>
+						<text x="247" y="170" fill="black" stroke="black">operator</text>
+					</svg>
+				</div>
+				<p><strong>重点来了！！！</strong>，接下来的循环我们遇到了<code>*</code>，这是一个比<code>+ -</code>优先级高和<code>/</code>优先级一样的操作符。如果我们将<code>+ -</code>的优先级定为<code>1</code>，那么<code>* /</code>的优先级就是<code>2</code>。我们既然遇到了优先级比上一个操作符高的操作符，我们就不能出栈运算了，我们先把这个操作符<code>*</code>入栈，然后我们得继续分析字符串，我们得到了数字<code>55</code>，入栈。</p>
+				<p>然后，我们遇到了结束符<code>`</code>，结束符的优先级最低，我们记作<code>-1</code>。优先级不如上一个优先级高，我们要<strong>出栈运算</strong>啦。出栈<code>op_2 55</code>，<code>op_1 22</code>，操作符<code>*</code>，根据操作符返回一个值<code>1210</code>，我们需要将这个值推进<code>num</code>栈内，但是我们的运算还没有结束，我们用<code>while</code>循环得将<code>operator</code>栈中的所有操作符进行计算，我们进行第一次的计算之后，栈的情况：</p>
+				<div>
+					<svg width="50%" height="100%" xmlns="http://www.w3.org/2000/svg">
+						<polyline points="66,50 66,150 166,150 166,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="105" y="140" fill="skyblue" stroke="skyblue">11</text>
+						<text x="92" y="120" fill="skyblue" stroke="skyblue">1210</text>
+						<polyline points="232,50 232,150 332,150 332,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="276" y="140" fill="blue" stroke="blue">+</text>
+						<text x="95" y="170" fill="black" stroke="black">num</text>
+						<text x="247" y="170" fill="black" stroke="black">operator</text>
+					</svg>
+				</div>
+				<p>是不是很熟悉栈的这种情况，简单运算，结果为：<code>1220</code>。</p>
+				<p>我们要来看看最复杂的情况了，<code>10-(5-1)</code>。</p>
+				<p>加入结束符：<code>expression += "`"</code></p>
+				<p>括号来了，括号里面的运算的优先级比较高，这就意味着我们遇到了<code>(</code>以后，不能计算，我们要继续往下面循环。</p>
+				<p>首先是<code>10</code>入栈，然后是减号<code>-</code>，<strong>重点来了</strong>，我们遇到了<code>(</code>，这时候，我们将<code>(</code>入栈，然后继续循环。此时的栈：</p>
+				<div>
+					<svg width="50%" height="100%" xmlns="http://www.w3.org/2000/svg">
+						<polyline points="66,50 66,150 166,150 166,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="105" y="140" fill="skyblue" stroke="skyblue">10</text>
+						<text x="92" y="120" fill="skyblue" stroke="skyblue"></text>
+						<polyline points="232,50 232,150 332,150 332,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="276" y="140" fill="blue" stroke="blue">-</text>
+						<text x="276" y="120" fill="blue" stroke="blue">(</text>
+						<text x="95" y="170" fill="black" stroke="black">num</text>
+						<text x="247" y="170" fill="black" stroke="black">operator</text>
+					</svg>
+				</div>
+				<p>我们继续，遇到了<code>5</code>，入栈，接下来，我们遇到了<code>-</code>，我们的栈的一个方法<code>peek</code>就派上用场了，我们判断栈的最上面是不是<code>(</code>，如果是，我们就继续，这里是，我们继续循环。此时的栈：</p>
+				<div>
+					<svg width="50%" height="100%" xmlns="http://www.w3.org/2000/svg">
+						<polyline points="66,50 66,150 166,150 166,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="105" y="140" fill="skyblue" stroke="skyblue">10</text>
+						<text x="105" y="120" fill="skyblue" stroke="skyblue">5</text>
+						<text x="92" y="120" fill="skyblue" stroke="skyblue"></text>
+						<polyline points="232,50 232,150 332,150 332,50" stroke="black" stroke-width="5" fill="rgba(0,0,0,0)"></polyline>
+						<text x="276" y="140" fill="blue" stroke="blue">-</text>
+						<text x="276" y="120" fill="blue" stroke="blue">(</text>
+						<text x="276" y="100" fill="blue" stroke="blue">-</text>
+						<text x="95" y="170" fill="black" stroke="black">num</text>
+						<text x="247" y="170" fill="black" stroke="black">operator</text>
+					</svg>
+				</div>
+				<p>我们的下一个遇到的是<code>1</code>，入栈，下面我们遇到了重要的结束括号<code>)</code>，我们这时候就需要出栈运算了，只要<code>peek</code>不是<code>(</code>，我们就得运算，如果遇到了<code>(</code>，就说明我们已经对这个括号内的数学表达式计算完毕，将<code>(</code><code>pop</code>出来，我们就解决了这个括号内的表达式。</p>
+				<p>我的口述大概就完毕了，我将代码呈现出来，我会写上详细的代码注释，来帮助理解代码是怎么工作的。我还会奉上我的codepen的一个案列。</p>
+				<pre>
+					<code class="language-js">
+//栈的构造函数
+function Stack() {
+	var items = [];
+	this.push = function(element) {
+		items.push(element);
+	};
+	this.pop = function() {
+		return items.pop();
+	};
+	this.peek = function() {
+		return items[items.length - 1];
+	};
+	this.isEmpty = function() {
+		return items.length === 0;
+	};
+	this.size = function() {
+		return items.length;
+	};
+	this.print = function() {
+		console.log(items.toString());
+	}
+}
+//判断传进来的是不是数字
+function isNumber(number) {
+	var nums = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "."];
+	return hasValue(number, nums);
+}
+//判断某个数组里面是否含有某个值
+function hasValue(value, arr) {
+	for(var i = 0; i < arr.length; i++) {
+		if(arr[i] == value) {
+			return true;
+		}
+	}
+	return false;
+}
+//判断传进来的是不是运算符
+function isOperator(operator) {
+	var operators = ["+", "-", "*", "/", "(", ")", "E"];
+	return hasValue(operator, operators);
+}
+//判断当前的运算符优先级是否比上级高
+function currentPriorityPrevious(current, previous) {
+	var priority = {"+": 1, "-": 1, "*": 2, "/": 2, "(": 0, ")": 0, "E": -1};
+	return !!(priority[current] - priority[previous] > 0);
+}
+//根据传进来的操作数以及操作符来返回相应的值
+function caculate(op_1, op, op_2) {
+	switch(op) {
+		case "+": return op_1 + op_2;
+		case "-": return op_1 - op_2;
+		case "*": return op_1 * op_2;
+		case "/": return op_1 / op_2;
+	}
+}
+//这里是表达式，够复杂吧
+var expression = "59*(1-5*(5-9*(2+1-9*(2-4))))";
+//调用计算函数
+caculateMathExpression(expression);
+//定义计算函数
+function caculateMathExpression(expression) {
+	//操作数的栈
+	var num = new Stack;
+	//操作符的栈
+	var operator = new Stack;
+	//预处理字符串，由于`在ES6中有特殊用途，所以我们用E来代表表达式结尾
+	expression += "E";
+	//如果开头是一个减号，我们在之前加上一个0，方便处理
+	if(expression[0] == "-") {
+		expression = "0" + expression;
+	}
+	//用for循环处理该表达式
+	for(var i = 0; i < expression.length; i++) {
+		//如果当前的字符是数字，我们还得判断这个数字是不是长数字
+		if(isNumber(expression[i])) {
+			var longNum = expression[i];
+			//如果当前的字符是数字，while判断下面还是不是数字，如果是，那么这就是长数字，拼合
+			while(isNumber(expression[++i])) {
+				longNum += expression[i];
+			}
+			//一个表达式   111+222  1是数字，1是数字，1是数字，加号不是数字，退出while循环
+			//由于这次循环之后i会自动加一，所以现在我们得退一位
+			i -= 1;
+			//将该长数字推进栈内
+			num.push(parseFloat(longNum));
+			//如果当前字符是一个操作符，我们进入这个if分支
+		} else if(isOperator(expression[i])) {
+			//如果是左括号我们直接推进栈内
+			if(expression[i] == "(") {
+				operator.push(expression[i]);
+				//如果是右括号，代表我们需要已经到了这一个括号的结束，我们需要运算
+			} else if(expression[i] == ")") {
+				//用while把括号内的表达式运算完毕
+				while(operator.peek() != "(") {
+					var op_2 = num.pop();
+					var op_1 = num.pop();
+					var op = operator.pop();
+					console.log(op_1, op, op_2);
+					num.push(caculate(op_1, op, op_2));
+					console.log(num.peek());
+			
+				if(operator.peek() === "(") {
+					//上面将括号内的运算完毕，我们可以将该左括号弹出栈
+					operator.pop();
+				}
+			} else {
+				//如果既不是左括号也不是右括号，并且操作符栈内有操作符
+				if(operator.size() > 0) {
+					//当前的运算符的优先级不如上一个的大
+					if(!currentPriorityPrevious(expression[i], operator.peek())) {
+						//我们现在就需要把之前的左右运算符进行运算，直到我们遇到左括号，但是这里并不能---
+						//---将左括号弹出栈，因为我们并没有遇到结束的右括号
+						while(operator.size() > 0 && operator.peek() !== "(") {
+							var op_2 = num.pop();
+							var op_1 = num.pop();
+							var op = operator.pop();
+							console.log(op_1, op, op_2);
+							num.push(caculate(op_1, op, op_2));
+							console.log(num.peek());
+						}
+					}
+				}
+				//将当前的操作符推进栈
+				operator.push(expression[i]);
+			}
+		}
+	}
+}
+					</code>
+				</pre>
+				<div>
+					<iframe height='610' scrolling='no' src='http://codepen.io/aizhizhi/embed/xEKOqj/?height=610&theme-id=dark&default-tab=result&embed-version=2' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;margin:auto;display: block;'>See the Pen <a href='http://codepen.io/aizhizhi/pen/xEKOqj/'>Simple Caculate</a> by 蒋璇 (<a href='http://codepen.io/aizhizhi'>@aizhizhi</a>) on <a href='http://codepen.io'>CodePen</a>.
+					</iframe>
+				</div>
+			</div>
+		</div>
