@@ -1,0 +1,26 @@
+---
+title: '栈的应用--递归解决汉诺塔问题'
+data: 2016-9-23 17:00:00
+tags: ['栈', '递归']
+---
+
+<style>
+	p {
+		/*text-indent: 2em;*/
+	}
+</style>
+<p>递归是一种自己调用自己的的算法，常见的递归就是斐波那契。</p>
+<pre>1 2 3 5 8 13 21 ...</pre>
+<p>下一个数等于前两个数之和。</p>
+<p>我们来看看这个算法如何实现：</p>
+<pre>
+function fibonacci(n) {
+	if(n == 1) {
+		return 1
+	} else if(n == 2) {
+		return 2
+	} else {
+		return fibonacci(n - 1) + fibonacci(n - 2)
+	}
+}
+</pre>
