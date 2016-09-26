@@ -36,13 +36,9 @@ function fibonacci(n) {
 	}
 }
 </pre>
-<svg id="svg" width="700" height="700" viewbox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
-	<defs>
-		<path id="tree" d="m 0,0 l5,0 s20,0,20,-20 l0,-35 s0,-20,20,-20 M5,0 s20,0,20,20 l0,35 s0,20,20,20" stroke-width="2" stroke="blue" fill="none"/>			
-	</defs>
-	<g id="graphics">
-	</g>
-</svg>
+<hr>
+<p>下面的这个交互式的svg图像就是形象的绘画斐波那契是如何工作的，如何进行递归的：</p>
+<p><strong>记住<code>Fobi(1) == Fibo(2) == 1</code></strong></p>
 <form class="form form-horizontal">
 	<div class="form-group col-md-9">
 		<label class="col-md-8 control-label">请输入你想获得第几个斐波那契数：</label>
@@ -61,7 +57,37 @@ function fibonacci(n) {
 		<button class="btn btn-primary" id="spawn">生成树</button>
 	</div>
 </form>
+<svg id="svg" width="700" height="700" viewbox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<path id="tree" d="m 0,0 l5,0 s20,0,20,-20 l0,-35 s0,-20,20,-20 M5,0 s20,0,20,20 l0,35 s0,20,20,20" stroke-width="2" stroke="blue" fill="none"/>			
+	</defs>
+	<g id="graphics">
+	</g>
+</svg>
 <hr>
+<p>递归介绍完毕。当然还有很多递归的例子，比如雪花，数字的排序方法也会用到递归，后期我会介绍。</p>
+<p>接下来我们讨论下汉诺塔的问题：</p>
+<p>我们先来简单看下汉诺塔的形状：</p>
+<div class="hanoiShape">
+	<svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
+		<defs>
+			<rect id="pillar" x="0" y="0" width="20" height="80"/>
+		</defs>
+		<g id="pillars">
+			<use xlink:href="#pillar" x="125" y="60" fill="green" />
+			<text x="129" y="60" fill="red">A</text>
+			<use xlink:href="#pillar" x="190" y="60" fill="skyblue" />
+			<text x="194" y="60" fill="red">B</text>
+			<use xlink:href="#pillar" x="255" y="60" fill="purple" />
+			<text x="259" y="60" fill="red">C</text>
+		</g>
+		<g id="foundation">
+			<rect x="80" y="140" width="240" height="20" fill="blue" />
+		</g>
+	</svg>
+</div>
+<p>由上图我们可以看到有三个柱子，我们在<strong>A</strong>柱子上放<strong>N</strong>个盘子，下面的最大，往上递减。</p>
+<p>我们将这<strong>N</strong>个金片从<strong>A</strong>借助<strong>B</strong>移动到<strong>C</strong>，移动的时候大的盘子不能覆盖小的盘子。</p>
 <script>
 function gridSvg(element) {
 	const blockSize = 50
@@ -192,7 +218,7 @@ var graphics = document.getElementById('graphics')
 	 *2.经过一夜的思考，第二种方法出来了，我决定根据上一个分支坐标来确定
 	 *  当前分支的坐标，这样分支的坐标是相对的，每一个分支的坐标根据上一个分支的坐标
 	 *  和高度来确定，
-	 *  我在递归的时候将所有的私有变量全部保存到函数中，并且不再函数内破坏
+	 *  我在递归的时候将所有的私有变量全部保存到函数中，并且不再在函数内破坏
 	 *  需要改变参数的时候在传递的时候改变而不是在函数内部改变，这样可以保持当前函数
 	 *  的所有私有变量在递归回来的时候和进去的时候一样
 	 *  并且在我根据上一个坐标来计算下一个坐标的时候，用字符串确定该分支应该是在上一个
