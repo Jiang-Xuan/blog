@@ -20,6 +20,9 @@ tags: ['栈', '递归']
 		stroke: rgba(0,0,0,0.5);
 		stroke-width: 2;
 	}
+	.canvas_wrapper {
+		text-align: center;
+	}
 </style>
 <p>递归是一种自己调用自己的的算法，常见的递归就是斐波那契。</p>
 <pre>1 2 3 5 8 13 21 ...</pre>
@@ -36,7 +39,7 @@ function fibonacci(n) {
 	}
 }
 </pre>
-<hr>
+<div class="divider"></div>
 <p>下面的这个交互式的svg图像就是形象的绘画斐波那契是如何工作的，如何进行递归的：</p>
 <p><strong>记住<code>Fobi(1) == Fibo(2) == 1</code></strong></p>
 <form class="form form-horizontal">
@@ -61,11 +64,12 @@ function fibonacci(n) {
 	<defs>
 		<path id="tree" d="m 0,0 l5,0 s20,0,20,-20 l0,-35 s0,-20,20,-20 M5,0 s20,0,20,20 l0,35 s0,20,20,20" stroke-width="2" stroke="blue" fill="none"/>			
 	</defs>
+	<text x="0" y="15" fill="black">图形ID:1</text>
 	<g id="graphics">
 	</g>
 </svg>
-<hr>
 <p>递归介绍完毕。当然还有很多递归的例子，比如雪花，数字的排序方法也会用到递归，后期我会介绍。</p>
+<div class="divider"></div>
 <p>接下来我们讨论下汉诺塔的问题：</p>
 <p>我们先来简单看下汉诺塔的形状：</p>
 <div class="hanoiShape">
@@ -73,6 +77,7 @@ function fibonacci(n) {
 		<defs>
 			<rect id="pillar" x="0" y="0" width="20" height="80"/>
 		</defs>
+		<text x="0" y="15" fill="black">图形ID:2</text>
 		<g id="pillars">
 			<use xlink:href="#pillar" x="125" y="60" fill="green" />
 			<text x="129" y="60" fill="red">A</text>
@@ -88,152 +93,214 @@ function fibonacci(n) {
 </div>
 <p>由上图我们可以看到有三个柱子，我们在<strong>A</strong>柱子上放<strong>N</strong>个盘子，下面的最大，往上递减。</p>
 <p>我们将这<strong>N</strong>个金片从<strong>A</strong>借助<strong>B</strong>移动到<strong>C</strong>，移动的时候大的盘子不能覆盖小的盘子。</p>
+<p>我们从最简单的开始，假设我们只有一个盘子，Easy，直接移动到<strong>C</strong>就可以了。</p>
+<div class="canvas_wrapper two_dish">
+	<canvas width="400" height="200" id="two_dish" style="border: 1px solid red"></canvas><br>
+	<button class="btn green darken-1 z-depth-4">移动</button>
+</div>
+<script src="http://code.createjs.com/easeljs-0.7.1.min.js"></script>
+<script src="http://cdn.bootcss.com/gsap/latest/TweenMax.min.js"></script>
 <script>
-function gridSvg(element) {
-	const blockSize = 50
-	//计算网格
-	var width = element.getAttribute('width')
-	var height = element.getAttribute('height')
-	// console.log("%cwidth:" + width + ",%cheight:" + height, "color:red", "color:white")
-	var horizontal = Math.ceil(height / blockSize)
-	var vertical = Math.ceil(width / blockSize)
-	// 创建网格组
-	var group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-	var horiLine = document.createElementNS('http://www.w3.org/2000/svg', 'line')
-	// 水平网格
-	horiLine.setAttribute('x1', 0)
-	horiLine.setAttribute('y1', 2)
-	horiLine.setAttribute('x2', width)
-	horiLine.setAttribute('y2', 2)
-	group.appendChild(horiLine)
-	group.setAttribute('class', 'grid')
-	for(var i = 1; i < horizontal; i++) {
+// 从匿名函数中暴露出来的函数  模块化处理
+var jx_module = {};
+/****************************************svg处理**********************************************/
+(function() {
+	function gridSvg(element) {
+		const blockSize = 50
+		//计算网格
+		var width = element.getAttribute('width')
+		var height = element.getAttribute('height')
+		// console.log("%cwidth:" + width + ",%cheight:" + height, "color:red", "color:white")
+		var horizontal = Math.ceil(height / blockSize)
+		var vertical = Math.ceil(width / blockSize)
+		// 创建网格组
+		var group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+		var horiLine = document.createElementNS('http://www.w3.org/2000/svg', 'line')
+		// 水平网格
+		horiLine.setAttribute('x1', 0)
+		horiLine.setAttribute('y1', 2)
+		horiLine.setAttribute('x2', width)
+		horiLine.setAttribute('y2', 2)
+		group.appendChild(horiLine)
+		group.setAttribute('class', 'grid')
+		for(var i = 1; i < horizontal; i++) {
+			var horiLine = document.createElementNS('http://www.w3.org/2000/svg', 'line')
+			horiLine.setAttribute('x1', 0)
+			horiLine.setAttribute('y1', i * blockSize)
+			horiLine.setAttribute('x2', width)
+			horiLine.setAttribute('y2', i * blockSize)
+			group.appendChild(horiLine)
+		}
 		var horiLine = document.createElementNS('http://www.w3.org/2000/svg', 'line')
 		horiLine.setAttribute('x1', 0)
-		horiLine.setAttribute('y1', i * blockSize)
+		horiLine.setAttribute('y1', height - 2)
 		horiLine.setAttribute('x2', width)
-		horiLine.setAttribute('y2', i * blockSize)
+		horiLine.setAttribute('y2', height - 2)
 		group.appendChild(horiLine)
-	}
-	var horiLine = document.createElementNS('http://www.w3.org/2000/svg', 'line')
-	horiLine.setAttribute('x1', 0)
-	horiLine.setAttribute('y1', height - 2)
-	horiLine.setAttribute('x2', width)
-	horiLine.setAttribute('y2', height - 2)
-	group.appendChild(horiLine)
-	group.setAttribute('class', 'grid')
-	// 水平网格结束
-	// 垂直网格
-	var vertiLine = document.createElementNS('http://www.w3.org/2000/svg', 'line')
-	vertiLine.setAttribute('x1', 2)
-	vertiLine.setAttribute('y1', 0)
-	vertiLine.setAttribute('x2', 2)
-	vertiLine.setAttribute('y2', height)
-	group.appendChild(vertiLine);
-	for(var i = 1; i < vertical; i++) {
+		group.setAttribute('class', 'grid')
+		// 水平网格结束
+		// 垂直网格
 		var vertiLine = document.createElementNS('http://www.w3.org/2000/svg', 'line')
-		vertiLine.setAttribute('x1', i * blockSize)
+		vertiLine.setAttribute('x1', 2)
 		vertiLine.setAttribute('y1', 0)
-		vertiLine.setAttribute('x2', i * blockSize)
+		vertiLine.setAttribute('x2', 2)
 		vertiLine.setAttribute('y2', height)
 		group.appendChild(vertiLine);
+		for(var i = 1; i < vertical; i++) {
+			var vertiLine = document.createElementNS('http://www.w3.org/2000/svg', 'line')
+			vertiLine.setAttribute('x1', i * blockSize)
+			vertiLine.setAttribute('y1', 0)
+			vertiLine.setAttribute('x2', i * blockSize)
+			vertiLine.setAttribute('y2', height)
+			group.appendChild(vertiLine);
+		}
+		var vertiLine = document.createElementNS('http://www.w3.org/2000/svg', 'line')
+		vertiLine.setAttribute('x1', width - 2)
+		vertiLine.setAttribute('y1', 0)
+		vertiLine.setAttribute('x2', width - 2)
+		vertiLine.setAttribute('y2', height)
+		group.appendChild(vertiLine);
+		// 垂直网格结束
+		element.appendChild(group);
 	}
-	var vertiLine = document.createElementNS('http://www.w3.org/2000/svg', 'line')
-	vertiLine.setAttribute('x1', width - 2)
-	vertiLine.setAttribute('y1', 0)
-	vertiLine.setAttribute('x2', width - 2)
-	vertiLine.setAttribute('y2', height)
-	group.appendChild(vertiLine);
-	// 垂直网格结束
-	element.appendChild(group);
-}
-var svg = document.getElementById('svg')
-gridSvg(svg)
+	var svg = document.getElementById('svg')
+	gridSvg(svg)
 
-var graphics = document.getElementById('graphics')
-	/*
-	 *@param coordinate Array 坐标[x,y]
-	 *@param height Number 分支的高度
-	 *@param direction String 确定是上支还是下支（某一个分支的，而不是整体的）
-	 *@return          Array 计算好的坐标
-	 */
-	function caculateCoordinate(coordinate, height, direction) {
-		var horizontal = coordinate[0] + 100
-		var vertical = (direction == "up") ? (coordinate[1] - height / 2) : (coordinate[1] + height / 2)
-		return [horizontal, vertical]
-	}
-	function fibonacci_1(m, n, coordinate, height) {
-		if(n <= 2) {
-			return 
-		} else {
-			/*
-			 *私有变量 m 代表现在是属于第几竖列，从0开始计数
-			 *私有变量 n 代表当前的分支上应该显示的数字
-			 *私有变量 coordinate 代表当前的环境的坐标
-			 *私有变量 height 代表当前的环境的高度
-			 */
-			var m = m
-			var n = n
-			var coordinate = coordinate
-			var height = 320 / Math.pow(2, m)
-			graph_1(m, n, coordinate, height)
-			fibonacci_1(m + 1, n - 1, caculateCoordinate(coordinate, height, "up"), height / 2)
-			fibonacci_1(m + 1, n - 2, caculateCoordinate(coordinate, height, "down"), height / 2)
+	var graphics = document.getElementById('graphics')
+		/*
+		 *@param coordinate Array 坐标[x,y]
+		 *@param height Number 分支的高度
+		 *@param direction String 确定是上支还是下支（某一个分支的，而不是整体的）
+		 *@return          Array 计算好的坐标
+		 */
+		function caculateCoordinate(coordinate, height, direction) {
+			var horizontal = coordinate[0] + 100
+			var vertical = (direction == "up") ? (coordinate[1] - height / 2) : (coordinate[1] + height / 2)
+			return [horizontal, vertical]
+		}
+		function fibonacci_1(m, n, coordinate, height) {
+			if(n <= 2) {
+				return 
+			} else {
+				/*
+				 *私有变量 m 代表现在是属于第几竖列，从0开始计数
+				 *私有变量 n 代表当前的分支上应该显示的数字
+				 *私有变量 coordinate 代表当前的环境的坐标
+				 *私有变量 height 代表当前的环境的高度 320 160 80 40 20 10
+				 */
+				var m = m
+				var n = n
+				var coordinate = coordinate
+				var height = 320 / Math.pow(2, m)
+				graph_1(m, n, coordinate, height)
+				fibonacci_1(m + 1, n - 1, caculateCoordinate(coordinate, height, "up"), height / 2)
+				fibonacci_1(m + 1, n - 2, caculateCoordinate(coordinate, height, "down"), height / 2)
+			}
+
+		}
+		function graph_1(m, n, coordinate, height) {
+			console.log("m:" + m + ",n:" + n + ",coordinate:" + coordinate + ",height:" + height)
+			// 缩放比例
+			var scale = height / 150
+			//上分支的文字的偏移量
+			var upTextX = coordinate[0] + 45
+			var upTextY = coordinate[1] - height / 2
+			//下文字的偏移量
+			var downTextX = coordinate[0] + 45
+			var downTextY = coordinate[1] + height / 2
+			// 每个树枝的缩放的中心点应该是开始绘画的点
+			var transformOrigin = `${coordinate[0]}px ${coordinate[1]}px`
+				var html = `
+			<g>
+				<use xlink:href="#tree" x="${coordinate[0]}" y="${coordinate[1]}" style="transform: scaleY(${scale});transform-origin: ${transformOrigin};"/>
+				<!-- 上分支 -->
+				<text x="${upTextX}" y="${upTextY}" textLength="55px" text-anchor="left" dominant-baseline="middle">Fibo(${n - 1})</text>
+				<!-- 下分支 -->
+				<text x="${downTextX}" y="${downTextY}" textLength="55px" text-anchor="left" dominant-baseline="middle">Fibo(${n - 2})</text>
+			</g>`
+				// console.log(m);
+				graphics.innerHTML = graphics.innerHTML + html;
 		}
 
+		// fibonacci_1(0, 5, [45, 250])
+
+		/*2016-9-25 10:30:00
+		 *不辜负这两天的奋斗，终于将问题解决，下面谈谈思路
+		 *1.第一次尝试解决问题，我使用判断上支还是下支的方法来解决，
+		 *  但是这是一个树形结构，无论我怎么去传参数判断该支属于上支还是下支
+		 *  树形结构是无限延展的，而我的参数不能无限传参，因此我无法判断该支到底属于上支
+		 *  还是属于下支，有时候参数的数量会影响生效的数量，比如3，4，5正常，到了6就会出现
+		 *  我无法预知的情况，所以这种方法行不通
+		 *2.经过一夜的思考，第二种方法出来了，我决定根据上一个分支坐标来确定
+		 *  当前分支的坐标，这样分支的坐标是相对的，每一个分支的坐标根据上一个分支的坐标
+		 *  和高度来确定，
+		 *  我在递归的时候将所有的私有变量全部保存到函数中，并且不再在函数内破坏
+		 *  需要改变参数的时候在传递的时候改变而不是在函数内部改变，这样可以保持当前函数
+		 *  的所有私有变量在递归回来的时候和进去的时候一样
+		 *  并且在我根据上一个坐标来计算下一个坐标的时候，用字符串确定该分支应该是在上一个
+		 *  分支高度的上半部分还是下半部分
+		 */
+
+
+		var spawn = document.getElementById('spawn')
+		spawn.onclick = function(e) {
+		 	var num = document.getElementById('num').value
+		 	e.preventDefault()
+		 	graphics.innerHTML = ""
+		 	graphics.innerHTML = `
+				<text x="0" y="350" textLength="55px" text-anchor="left" dominant-baseline="middle">Fibo(${num})</text>
+		 	`
+		 	fibonacci_1(0, num, [45, 350])
+		}
+		//将该方法暴露出去
+		jx_module.fibonacci_1 = fibonacci_1
+})()
+/****************************************svg处理结束**********************************************/
+/****************************************canvas处理**********************************************/
+//这也是匿名函数的写法  有点像C语言
+void function(){
+	function hanoi(id, n) {
+		//draw main stage ←-----------------------------------------------←
+		var stage = new createjs.Stage(id) 								//|
+		// draw base       												//|
+		var base = new createjs.Shape 									//|
+		base.graphics.beginFill('red').drawRect(40, 150, 320, 10)       //|
+		// let base into main stage  -------------------------------------↑
+		stage.addChild(base)
+		//draw graphics ID
+		var graphicsID = new createjs.Text('图形ID:3', '16px Arial', '#000000')
+		graphicsID.x = 0
+		stage.addChild(graphicsID)
+		//pillars Container
+		var pillars = new createjs.Container
+		pillars.x = 40
+		pillars.y = 150
+		//built pillar
+		for(let i = 0; i < 3; i++) {
+			let pillar = new createjs.Shape
+			pillar.graphics.beginFill('green').drawRect(50 + i * 105, -90, 10, 90)
+			pillars.addChild(pillar)
+		}
+		//let pillars into stage
+		stage.addChild(pillars)
+		//-----------draw dish-------------------
+		var dishs = new createjs.Container
+		dishs.x = 95
+		dishs.y = 150
+		for(let i = 0; i < n; i++) {
+			let dish = new createjs.Shape
+			dish.graphics.beginFill('black').drawRect(0, -10, 100, 10)
+			dish.regX = 50
+			dishs.addChild(dish)
+		}
+		stage.addChild(dishs)
+		//-----------draw dish end-------------------
+		// 更新舞台
+		stage.update()
+		console.log(stage, base)
 	}
-	function graph_1(m, n, coordinate, height) {
-		console.log("m:" + m + ",n:" + n + ",coordinate:" + coordinate + ",height:" + height)
-		// 缩放比例
-		var scale = height / 150
-		//上分支的文字的偏移量
-		var upTextX = coordinate[0] + 45
-		var upTextY = coordinate[1] - height / 2
-		//下文字的偏移量
-		var downTextX = coordinate[0] + 45
-		var downTextY = coordinate[1] + height / 2
-		// 每个树枝的缩放的中心点应该是开始绘画的点
-		var transformOrigin = `${coordinate[0]}px ${coordinate[1]}px`
-			var html = `
-		<g>
-			<use xlink:href="#tree" x="${coordinate[0]}" y="${coordinate[1]}" style="transform: scaleY(${scale});transform-origin: ${transformOrigin};"/>
-			<!-- 上分支 -->
-			<text x="${upTextX}" y="${upTextY}" textLength="55px" text-anchor="left" dominant-baseline="middle">Fibo(${n - 1})</text>
-			<!-- 下分支 -->
-			<text x="${downTextX}" y="${downTextY}" textLength="55px" text-anchor="left" dominant-baseline="middle">Fibo(${n - 2})</text>
-		</g>`
-			// console.log(m);
-			graphics.innerHTML = graphics.innerHTML + html;
-	}
+	hanoi('two_dish', 1)
+}()
+/****************************************canvas处理结束**********************************************/
 
-	// fibonacci_1(0, 5, [45, 250])
-
-	/*2016-9-25 10:30:00
-	 *不辜负这两天的奋斗，终于将问题解决，下面谈谈思路
-	 *1.第一次尝试解决问题，我使用判断上支还是下支的方法来解决，
-	 *  但是这是一个树形结构，无论我怎么去传参数判断该支属于上支还是下支
-	 *  树形结构是无限延展的，而我的参数不能无限传参，因此我无法判断该支到底属于上支
-	 *  还是属于下支，有时候参数的数量会影响生效的数量，比如3，4，5正常，到了6就会出现
-	 *  我无法预知的情况，所以这种方法行不通
-	 *2.经过一夜的思考，第二种方法出来了，我决定根据上一个分支坐标来确定
-	 *  当前分支的坐标，这样分支的坐标是相对的，每一个分支的坐标根据上一个分支的坐标
-	 *  和高度来确定，
-	 *  我在递归的时候将所有的私有变量全部保存到函数中，并且不再在函数内破坏
-	 *  需要改变参数的时候在传递的时候改变而不是在函数内部改变，这样可以保持当前函数
-	 *  的所有私有变量在递归回来的时候和进去的时候一样
-	 *  并且在我根据上一个坐标来计算下一个坐标的时候，用字符串确定该分支应该是在上一个
-	 *  分支高度的上半部分还是下半部分
-	 */
-
-
-	var spawn = document.getElementById('spawn')
-	spawn.onclick = function(e) {
-	 	var num = document.getElementById('num').value
-	 	e.preventDefault()
-	 	graphics.innerHTML = ""
-	 	graphics.innerHTML = `
-			<text x="0" y="350" textLength="55px" text-anchor="left" dominant-baseline="middle">Fibo(${num})</text>
-	 	`
-	 	fibonacci_1(0, num, [45, 350])
-	}
 </script>
