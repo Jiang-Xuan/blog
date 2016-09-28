@@ -1,7 +1,7 @@
 ---
-title: '栈的应用--递归解决汉诺塔问题-创造中...'
+title: '栈的应用--递归解决汉诺塔问题(交互式介绍)-创造中...'
 data: 2016-9-23 17:00:00
-tags: ['栈', '递归']
+tags: ['栈', '递归', 'Interactive']
 ---
 
 <style>
@@ -94,13 +94,51 @@ function fibonacci(n) {
 <p>由上图我们可以看到有三个柱子，我们在<strong>A</strong>柱子上放<strong>N</strong>个盘子，下面的最大，往上递减。</p>
 <p>我们将这<strong>N</strong>个金片从<strong>A</strong>借助<strong>B</strong>移动到<strong>C</strong>，移动的时候大的盘子不能覆盖小的盘子。</p>
 <p>我们从最简单的开始，假设我们只有一个盘子，Easy，直接移动到<strong>C</strong>就可以了。</p>
+<p>这是处于最简单的汉诺塔状态：</p>
+<div class="canvas_wrapper one_dish">
+	<canvas width="400" height="200" id="one_dish"></canvas><br>
+	<button class="btn green darken-1 z-depth-4">移动</button>
+</div>
+<p>一个似乎有点太简单了，我们加一个，两个盘子，我们就需要借助辅助的柱子<strong>B</strong>。</p>
+<p>我们先来看看两个盘子的动画演示：</p>
 <div class="canvas_wrapper two_dish">
-	<canvas width="400" height="200" id="two_dish" style="border: 1px solid red"></canvas><br>
+	<canvas width="400" height="200" id="two_dish"></canvas><br>
+	<button class="btn green darken-1 z-depth-4">移动</button>
+</div>
+<pre><code>Hanoi(2, A, B, C) >> 这代表我们将两个盘子从<strong>A</strong>借助<strong>B</strong>移动到<strong>C</strong></code></pre>
+<p>我们既然要满足大的不能覆盖小的，我们需要先把最大的盘子上面的盘子移到辅助的柱子<strong>B</strong>上面，此时我们的要求就变成现在的样子：</p>
+<pre><code>Hanoi(1, A, C, B) >> 这代表我们将一个盘子从<strong>A</strong>借助<strong>C</strong>移动到<strong>B</strong></code></pre>
+<p>我们将最大的上面的盘子移动到辅助的柱子(<strong>B</strong>)上面之后我们就可以移动最大的到目标柱子<strong>C</strong>上面。</p>
+<pre><code>源柱子&nbsp;<strong>A</strong>&nbsp;上面最大的盘子 >> 目标柱子&nbsp;<strong>C</strong>&nbsp;</code></pre>
+<p>除了最大的盘子之外的盘子都在辅助的柱子(<strong>B</strong>)上面，接下来，我们的要求又成了将辅助柱子<strong>B</strong>上面的所有盘子移动到<strong>C</strong>。</p>
+<pre><code>Hanoi(1, B, A, C) >> 这代表我们将一个盘子从<strong>B</strong>借助<strong>A</strong>移动到<strong>C</strong></code></pre>
+<p><strong>看到了么，我们的要求是那么的相似。</strong></p>
+<p>我们可以来个更复杂的了：</p>
+<div class="canvas_wrapper five_dish">
+	<canvas width="400" height="200" id="five_dish"></canvas><br>
 	<button class="btn green darken-1 z-depth-4">移动</button>
 </div>
 <script src="http://code.createjs.com/easeljs-0.7.1.min.js"></script>
 <script src="http://cdn.bootcss.com/gsap/latest/TweenMax.min.js"></script>
 <script>
+function Stack() {
+	var items = []
+	this.push = function(element) {
+		items.push(element)
+	}
+	this.pop = function() {
+		return items.pop()
+	}
+	this.peek = function() {
+		return items[items.length - 1]
+	}
+	this.isEmpty = function() {
+		return items.length == 0
+	}
+	this.size = function() {
+		return items.length
+	}
+}
 // 从匿名函数中暴露出来的函数  模块化处理
 var jx_module = {};
 /****************************************svg处理**********************************************/
@@ -259,7 +297,12 @@ var jx_module = {};
 /****************************************canvas处理**********************************************/
 //这也是匿名函数的写法  有点像C语言
 void function(){
-	function hanoi(id, n) {
+	/*
+	 *@param id String canvas的ID，也就是舞台的ID
+	 *@param n Number 要进行几个盘子的动画
+	 *@param controlElement HTMLButtonElement 控制动画的button元素 
+	 */
+	function hanoi(id, n, controlElement, imgNum) {
 		//draw main stage ←-----------------------------------------------←
 		var stage = new createjs.Stage(id) 								//|
 		// draw base       												//|
@@ -268,7 +311,7 @@ void function(){
 		// let base into main stage  -------------------------------------↑
 		stage.addChild(base)
 		//draw graphics ID
-		var graphicsID = new createjs.Text('图形ID:3', '16px Arial', '#000000')
+		var graphicsID = new createjs.Text(`图形ID:${imgNum}`, '16px Arial', '#000000')
 		graphicsID.x = 0
 		stage.addChild(graphicsID)
 		//pillars Container
@@ -278,29 +321,115 @@ void function(){
 		//built pillar
 		for(let i = 0; i < 3; i++) {
 			let pillar = new createjs.Shape
+			let pillarNum = String.fromCharCode(65 + i) //动态生成柱子序号  Unicode码 65--A 66--B 67--C 
+			let numObject = new createjs.Text(pillarNum, '14 px Arial', 'black')
+			numObject.x = 50 + i * 105 + 1
+			numObject.y = -100
 			pillar.graphics.beginFill('green').drawRect(50 + i * 105, -90, 10, 90)
+			pillars.addChild(numObject)
 			pillars.addChild(pillar)
 		}
 		//let pillars into stage
 		stage.addChild(pillars)
 		//-----------draw dish-------------------
+		//盘子的栈
+		var dishsStack = [
+			new Stack,
+			new Stack,
+			new Stack
+		]
+		var dishsArray = [];
 		var dishs = new createjs.Container
 		dishs.x = 95
 		dishs.y = 150
 		for(let i = 0; i < n; i++) {
+			let color = 'rgb(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' +Math.round(Math.random() * 255) + ')' 
 			let dish = new createjs.Shape
-			dish.graphics.beginFill('black').drawRect(0, -10, 100, 10)
-			dish.regX = 50
+			dish.graphics.beginFill(color).drawRect(0, 0, 100 - 10 * i, 10)
+			dish.x = 0
+			dish.y = -10 * i
+			dish.regX = (100 - 10 * i) / 2
+			dish.regY = 10
+			dishsStack[0].push(dish)
+			dishsArray.push(dish)
 			dishs.addChild(dish)
 		}
 		stage.addChild(dishs)
 		//-----------draw dish end-------------------
 		// 更新舞台
 		stage.update()
-		console.log(stage, base)
+		console.log(pillars, dishsArray, controlElement, dishsStack[0].size())
+		//------以上属于绘画舞台，接下来进行动画的绘画
+		function animate() {
+			stage.update()
+			requestAnimationFrame(animate)
+		}
+		var delay = -2.0
+		function moveHanoi(n, a, b, c) {
+			if(n > 0) {
+				moveHanoi(n - 1, a, c, b)
+				var dish = dishsStack[a].pop()
+				var resourceX = a * 105
+				var targetX = c * 105
+				var targetY = -10 * dishsStack[c].size()
+				var tl = new TimelineLite({
+					delay: delay += 2
+				})
+				tl.append(TweenLite.to(dish, .5, {
+					y: -100
+				}))
+				tl.append(TweenLite.to(dish, 1, {
+					bezier: [
+						{
+							x: (resourceX + targetX) / 2,
+							y: -120
+						},{
+							x: targetX,
+							y: -100
+						}
+					]
+				}))
+				tl.append(TweenLite.to(dish, .5, {
+					y: targetY
+				}))
+				dishsStack[c].push(dish)
+				moveHanoi(n - 1, b, a, c)
+			}
+		}
+		function restart() {
+			delay = -2.0
+			dishsStack = [
+						new Stack,
+						new Stack,
+						new Stack
+					]
+			dishs.removeAllChildren();
+			for(let i = 0; i < n; i++) {
+				let color = 'rgb(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' +Math.round(Math.random() * 255) + ')' 
+				let dish = new createjs.Shape
+				dish.graphics.beginFill(color).drawRect(0, 0, 100 - 10 * i, 10)
+				dish.x = 0
+				dish.y = -10 * i
+				dish.regX = (100 - 10 * i) / 2
+				dish.regY = 10
+				dishsStack[0].push(dish)
+				dishsArray.push(dish)
+				dishs.addChild(dish)
+			}
+		}
+		controlElement.onclick = function() {
+			restart()
+			animate()
+			moveHanoi(n, 0, 1, 2)
+		}
 	}
-	hanoi('two_dish', 1)
+
+	jx_module.hanoi = hanoi;
 }()
 /****************************************canvas处理结束**********************************************/
 
+
+jx_module.hanoi('one_dish', 1, document.querySelector('.one_dish button'), 3)
+jx_module.hanoi('two_dish', 2, document.querySelector('.two_dish button'), 4)
+jx_module.hanoi('five_dish', 5, document.querySelector('.five_dish button'), 5)
 </script>
