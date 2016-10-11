@@ -1,6 +1,6 @@
 ---
-title: '栈的应用--递归解决汉诺塔问题(交互式介绍)-创造中...'
-data: 2016-9-23 17:00:00
+title: '栈的应用--递归解决汉诺塔问题(交互式介绍)'
+date: 2016-9-23 17:00:00
 tags: ['栈', '递归', 'Interactive']
 ---
 
@@ -113,11 +113,49 @@ function fibonacci(n) {
 <p>除了最大的盘子之外的盘子都在辅助的柱子(<strong>B</strong>)上面，接下来，我们的要求又成了将辅助柱子<strong>B</strong>上面的所有盘子移动到<strong>C</strong>。</p>
 <pre><code>Hanoi(1, B, A, C) >> 这代表我们将一个盘子从<strong>B</strong>借助<strong>A</strong>移动到<strong>C</strong></code></pre>
 <p><strong>看到了么，我们的要求是那么的相似。</strong></p>
-<p>我们可以来个更复杂的了：</p>
+<p>我们可以来个更复杂的了(我不详细解释，仔细看动画)：</p>
 <div class="canvas_wrapper five_dish">
 	<canvas width="400" height="200" id="five_dish"></canvas><br>
 	<button class="btn green darken-1 z-depth-4">移动</button>
 </div>
+<pre><code>
+	//栈的构造函数
+	function Stack() {
+		var items = []
+		this.push = function(element) {
+			items.push()
+		}
+		this.pop = function() {
+			return items.pop()
+		}
+		this.peek = function() {
+			return items[items.length]
+		}
+		this.isEmpty = function() {
+			return items.length == 0
+		}
+		this.size = function() {
+			return items.length
+		}
+	}
+	var A = new Stack()
+	var B = new Stack()
+	var C = new Stack()
+
+	A.push(1)
+	A.push(2)
+	A.push(3)
+	A.push(4)
+	A.push(5)
+
+	function Hanoi(n) {
+		if(n > 0) {
+			Hanoi(n - 1, A, C, B)
+			C.push(A.pop());
+			Hanoi(n - 1, B, A, C)
+		}
+	}
+</code></pre>
 <script src="http://code.createjs.com/easeljs-0.7.1.min.js"></script>
 <script src="http://cdn.bootcss.com/gsap/latest/TweenMax.min.js"></script>
 <script>
